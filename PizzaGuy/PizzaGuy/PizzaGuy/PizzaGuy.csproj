@@ -110,10 +110,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="Sprite.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
+    <Content Include="Pac_Man_by_byaQya.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PizzaGuyContent\PizzaGuyContent.contentproj">
