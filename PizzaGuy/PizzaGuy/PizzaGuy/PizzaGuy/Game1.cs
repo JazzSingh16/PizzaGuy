@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using xTile;
+using xTile.Display;
 
 namespace RealPacman
 {
@@ -20,7 +22,9 @@ namespace RealPacman
         SpriteBatch spriteBatch;
         Pacman pacman;
         Texture2D Spritesheet;
-
+        Map map;
+        IDisplayDevice xnaDisplayDevice;
+        xTile.Dimensions.Rectangle viewport;
 
         public Game1()
         {
@@ -38,6 +42,10 @@ namespace RealPacman
         {
             // TODO: Add your initialization logic here
 
+            xnaDisplayDevice = new XnaDisplayDevice(Content, GraphicsDevice);
+            viewport = new xTile.Dimensions.Rectangle(new xTile.Dimensions.Size(this.Window.ClientBounds.Width, this.Window.ClientBounds.Height));
+
+
             base.Initialize();
         }
 
@@ -51,6 +59,9 @@ namespace RealPacman
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Spritesheet = Content.Load<Texture2D>(@"PacMan");
             pacman = new Pacman(new Vector2(0, 0), Spritesheet, new Rectangle(0, 0, 32, 32), new Vector2(32, 0));
+
+            map = Content.Load<Map>("Untitled");
+            map.LoadTileSheets(xnaDisplayDevice);
 
             // TODO: use this.Content to load your game content here
         }
@@ -87,6 +98,8 @@ namespace RealPacman
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
+
+            map.Draw(xnaDisplayDevice, viewport);
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();

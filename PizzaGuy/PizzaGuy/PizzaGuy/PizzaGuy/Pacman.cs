@@ -18,9 +18,9 @@ namespace RealPacman
 
     class Pacman : Sprite
     {
-        public Direction direction = Direction.RIGHT;
-        public Vector2 target;
-        public float speed = 70f;
+        int speed = 100;
+        Direction direction;
+        Vector2 target;
 
         public Pacman(
             Vector2 location,
@@ -30,82 +30,92 @@ namespace RealPacman
 
             base(location, texture, initialFrame, velocity)
         {
+            direction = Direction.RIGHT;
             target = location + new Vector2(32, 0);
-            velocity = new Vector2(speed, 0);
+            UpdateDirection();
+        }
+
+        public void UpdateDirection()
+        {
+
+
+            switch (direction)
+            {
+                case Direction.RIGHT:
+                    Velocity = new Vector2(speed, 0);
+                    Rotation = 0;
+                    target = location + new Vector2(32, 0);
+                    break;
+                case Direction.LEFT:
+                    Velocity = new Vector2(-speed, 0);
+                    Rotation = MathHelper.Pi;
+                    target = location + new Vector2(-32, 0);
+                    break;
+                case Direction.DOWN:
+                    Velocity = new Vector2(0, speed);
+                    Rotation = MathHelper.PiOver2;
+                    target = location + new Vector2(0, 32);
+                    break;
+                case Direction.UP:
+                    Velocity = new Vector2(0, -speed);
+                    Rotation = -MathHelper.PiOver2;
+                    target = location + new Vector2(0, -32);
+                    break;
+            }
         }
 
         public override void Update(GameTime gameTime)
         {
             KeyboardState keyboard = Keyboard.GetState();
-
             if (keyboard.IsKeyDown(Keys.Right))
             {
-                //Rotation = 0;
-                //Velocity = new Vector2(200, 0);
                 direction = Direction.RIGHT;
             }
-
-            if (keyboard.IsKeyDown(Keys.Down))
-            {
-                //Rotation = MathHelper.PiOver2;
-                //Velocity = new Vector2(0, 200);
-                direction = Direction.DOWN;
-            }
-
             if (keyboard.IsKeyDown(Keys.Left))
             {
-                //Rotation = MathHelper.Pi;
-                //Velocity = new Vector2(-200, 0);
                 direction = Direction.LEFT;
             }
-
+            if (keyboard.IsKeyDown(Keys.Down))
+            {
+                direction = Direction.DOWN;
+            }
             if (keyboard.IsKeyDown(Keys.Up))
             {
-                //Rotation = -MathHelper.PiOver2;
-                //Velocity = new Vector2(0, -200);
                 direction = Direction.UP;
             }
 
-            if (velocity.X > 0 && location.X >= target.X ||
-                velocity.X < 0 && location.X <= target.X ||
-                velocity.Y > 0 && location.Y >= target.Y ||
-                velocity.Y < 0 && location.Y <= target.Y )
+
+            if (velocity.X > 0 && direction == Direction.LEFT ||
+                velocity.X < 0 && direction == Direction.RIGHT ||
+                velocity.Y < 0 && direction == Direction.DOWN ||
+                velocity.Y > 0 && direction == Direction.UP)
+            {
+                // if target was 32, 0, then we would want it to be 0, 0
+                switch (direction)
+                {
+                    case Direction.LEFT: target = target - new Vector2(32, 0); break;
+                    case Direction.RIGHT: target = target + new Vector2(32, 0); break;
+                    case Direction.UP: target = target - new Vector2(0, 32); break;
+                    case Direction.DOWN: target = target + new Vector2(0, 32); break;
+                }
+
+                UpdateDirection();
+            }
+
+            if ((velocity.X > 0 && location.X >= target.X) ||
+                (velocity.X < 0 && location.X <= target.X) ||
+                (velocity.Y > 0 && location.Y >= target.Y) ||
+                (velocity.Y < 0 && location.Y <= target.Y)
+                )
             {
                 location = target;
-                
-                //velocity = Vector2.Zero;
-
-                if (direction == Direction.RIGHT)
-                {
-                    target = location + new Vector2(32, 0);
-                    Rotation = 0;
-                    Velocity = new Vector2(speed, 0);
-                }
-
-                if (direction == Direction.LEFT)
-                {
-                    target = location + new Vector2(-32, 0);
-                    Rotation = MathHelper.Pi;
-                    Velocity = new Vector2(speed, 0);
-                }
-
-                if (direction == Direction.UP) =
-                {
-                    target = location + new Vector2(0, -32);
-                    Rotation = -MathHelper.PiOver2;
-                    Velocity = new Vector2(0, speed);
-                }
-
-                if (direction == Direction.UP)
-                {
-                    target = location + new Vector2(0, 32);
-                    
+                UpdateDirection();
             }
+
 
             base.Update(gameTime);
         }
 
-      
 
         public override void Draw(SpriteBatch spriteBatch)
         {
